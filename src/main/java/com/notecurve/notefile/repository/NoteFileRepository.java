@@ -1,0 +1,25 @@
+package com.notecurve.notefile.repository;
+
+import com.notecurve.notefile.domain.NoteFile;
+import com.notecurve.note.domain.Note;
+
+import org.springframework.data.jpa.repository.EntityGraph;
+import org.springframework.data.jpa.repository.JpaRepository;
+
+import java.util.List;
+import java.util.Optional;
+
+public interface NoteFileRepository extends JpaRepository<NoteFile, Long> {
+
+    // Note와 NoteFile을 한 번에 가져오기
+    @EntityGraph(attributePaths = {"note"})
+    List<NoteFile> findByNote(Note note);
+
+    // NoteFile을 Note와 User와 함께 가져오기
+    @EntityGraph(attributePaths = {"note", "note.user"})
+    Optional<NoteFile> findWithNoteAndUserById(Long fileId);
+
+    // 파일 이름으로 조회 (이미지 서빙용)
+    @EntityGraph(attributePaths = {"note", "note.user"})
+    Optional<NoteFile> findByOriginalNameAndNote_UserId(String originalName, Long userId);
+}
