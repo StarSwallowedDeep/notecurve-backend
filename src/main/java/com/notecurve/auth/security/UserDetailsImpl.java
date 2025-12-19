@@ -8,13 +8,12 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import com.notecurve.user.domain.User;
 
+import lombok.RequiredArgsConstructor;
+
+@RequiredArgsConstructor
 public class UserDetailsImpl implements UserDetails {
 
     private final User user;
-
-    public UserDetailsImpl(User user) {
-        this.user = user;
-    }
     
     public User getUser() {
         return user;
