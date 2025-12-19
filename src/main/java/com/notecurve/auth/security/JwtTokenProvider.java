@@ -18,10 +18,10 @@ import io.jsonwebtoken.security.Keys;
 @Component
 public class JwtTokenProvider {
 
+    private static final long EXPIRATION_TIME = 1000 * 60 * 60;
+
     @Value("${jwt.secret}")
     private String secretKey;
-
-    private final long EXPIRATION_TIME = 1000 * 60 * 60;
 
     private SecretKey key;
 
