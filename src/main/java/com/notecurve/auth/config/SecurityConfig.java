@@ -12,24 +12,20 @@ import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.cors.CorsUtils;
 
-import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
-
 import com.notecurve.auth.security.JwtAuthenticationFilter;
 import com.notecurve.auth.security.JwtTokenProvider;
 import com.notecurve.user.repository.UserRepository;
 
+import lombok.RequiredArgsConstructor;
+
 import java.util.List;
 
 @Configuration
+@RequiredArgsConstructor
 public class SecurityConfig {
 
     private final JwtTokenProvider jwtTokenProvider;
     private final UserRepository userRepository;
-
-    public SecurityConfig(JwtTokenProvider jwtTokenProvider, UserRepository userRepository) {
-        this.jwtTokenProvider = jwtTokenProvider;
-        this.userRepository = userRepository;
-    }
 
     @Bean
     public PasswordEncoder passwordEncoder() {
