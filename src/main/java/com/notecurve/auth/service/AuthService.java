@@ -7,18 +7,15 @@ import com.notecurve.user.domain.User;
 import com.notecurve.user.repository.UserRepository;
 import com.notecurve.auth.security.JwtTokenProvider;
 
+import lombok.RequiredArgsConstructor;
+
 @Service
+@RequiredArgsConstructor
 public class AuthService {
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtTokenProvider jwtTokenProvider;
-
-    public AuthService(UserRepository userRepository, PasswordEncoder passwordEncoder, JwtTokenProvider jwtTokenProvider) {
-        this.userRepository = userRepository;
-        this.passwordEncoder = passwordEncoder;
-        this.jwtTokenProvider = jwtTokenProvider;
-    }
 
     public String login(String loginId, String password) {
         // 로그인 아이디로 사용자 조회
