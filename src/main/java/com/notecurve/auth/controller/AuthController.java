@@ -15,19 +15,16 @@ import com.notecurve.auth.service.AuthService;
 import com.notecurve.user.domain.User;
 import com.notecurve.user.service.UserService;
 
+import lombok.RequiredArgsConstructor;
+
 @RestController
 @RequestMapping("/api/auth")
+@RequiredArgsConstructor
 public class AuthController {
 
     private final AuthService authService;
     private final JwtTokenProvider jwtTokenProvider;
     private final UserService userService;
-
-    public AuthController(AuthService authService, JwtTokenProvider jwtTokenProvider, UserService userService) {
-        this.authService = authService;
-        this.jwtTokenProvider = jwtTokenProvider;
-        this.userService = userService;
-    }
 
     // 로그인
     @PostMapping("/login")
