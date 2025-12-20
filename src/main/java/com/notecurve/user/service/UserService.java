@@ -9,16 +9,14 @@ import org.springframework.transaction.annotation.Transactional;
 import com.notecurve.user.domain.User;
 import com.notecurve.user.repository.UserRepository;
 
+import lombok.RequiredArgsConstructor;
+
 @Service
+@RequiredArgsConstructor
 public class UserService {
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
-
-    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder) {
-        this.userRepository = userRepository;
-        this.passwordEncoder = passwordEncoder;
-    }
 
     // 회원가입 메서드
     @Transactional
