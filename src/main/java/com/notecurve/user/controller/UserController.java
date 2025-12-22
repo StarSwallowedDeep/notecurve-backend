@@ -10,7 +10,6 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
-import com.notecurve.auth.security.UserDetailsImpl;
 import com.notecurve.user.domain.User;
 import com.notecurve.user.service.UserService;
 
@@ -34,22 +33,34 @@ public class UserController {
     }
 
     @PatchMapping("/{id}/password")
-    public ResponseEntity<String> updatePassword(@PathVariable("id") Long id, @RequestBody Map<String, String> body) {
+    public ResponseEntity<String> updatePassword(@PathVariable Long id, @RequestBody Map<String, String> body) {
         String newPassword = body.get("newPassword");
+
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String loginId = authentication.getName(); 
+
         try {
-            userService.updatePassword(id, newPassword);
+            userService.updatePassword(id, loginId, newPassword);
             return ResponseEntity.ok("비밀번호 변경 완료");
+        } catch (IllegalStateException e) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("본인 계정만 변경할 수 있습니다.");
         } catch (IllegalArgumentException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("사용자를 찾을 수 없습니다.");
         }
     }
 
     @PatchMapping("/{id}/name")
-    public ResponseEntity<String> updateName(@PathVariable("id") Long id, @RequestBody Map<String, String> body) {
+    public ResponseEntity<String> updateName(@PathVariable Long id, @RequestBody Map<String, String> body) {
         String newName = body.get("newName");
+
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String loginId = authentication.getName(); 
+
         try {
-            userService.updateName(id, newName);
+            userService.updateName(id, loginId, newName);
             return ResponseEntity.ok("이름 변경 완료");
+        } catch (IllegalStateException e) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("본인 계정만 변경할 수 있습니다.");
         } catch (IllegalArgumentException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("사용자를 찾을 수 없습니다.");
         }
@@ -58,12 +69,10 @@ public class UserController {
     @DeleteMapping("/{id}")
     public ResponseEntity<String> deleteUser(@PathVariable Long id) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
-        String loginId = userDetails.getUsername();
+        String loginId = authentication.getName(); 
 
         try {
-            // 서비스에서 본인 계정만 삭제 처리
-            userService.deleteUser(id); 
+            userService.deleteUser(id, loginId);
 
             ResponseCookie deleteCookie = ResponseCookie.from("token", "")
                     .httpOnly(true)
