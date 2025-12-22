@@ -1,8 +1,6 @@
 package com.notecurve.user.service;
 
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -50,9 +48,13 @@ public class UserService {
 
     // 패스워드 변경 메서드
     @Transactional
-    public void updatePassword(Long userId, String newPassword) {
+    public void updatePassword(Long userId, String loginId, String newPassword) {
         User user = userRepository.findById(userId)
             .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 회원입니다."));
+
+        if (!user.getLoginId().equals(loginId)) {
+            throw new IllegalStateException("본인 계정만 변경할 수 있습니다.");
+        }
 
         if (passwordEncoder.matches(newPassword, user.getPassword())) {
             throw new IllegalArgumentException("이전 비밀번호와 동일한 비밀번호는 사용할 수 없습니다.");
@@ -70,7 +72,13 @@ public class UserService {
 
     // 이름 변경 메서드
     @Transactional
-    public void updateName(Long userId, String newName) {
+    public void updateName(Long userId, String loginId, String newName) {
+        User user = userRepository.findById(userId)
+            .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 회원입니다."));
+
+        if (!user.getLoginId().equals(loginId)) {
+            throw new IllegalStateException("본인 계정만 변경할 수 있습니다.");
+        }
 
         if (!newName.matches("^[a-zA-Z0-9가-힣]{2,10}$")) {
             throw new IllegalArgumentException("이름은 2~10자의 영어, 한글, 숫자만 가능합니다.");
@@ -80,25 +88,17 @@ public class UserService {
             throw new IllegalArgumentException("이미 사용 중인 이름입니다.");
         }
 
-        User user = userRepository.findById(userId)
-            .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 회원입니다."));
-
         user.setName(newName);
         userRepository.save(user);
     }
 
     // 회원탈퇴 메서드
     @Transactional
-    public void deleteUser(Long userId) {
-
-        // 현재 로그인한 사용자 정보 가져오기
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String currentLoginId = authentication.getName();
-
+    public void deleteUser(Long userId, String loginId) {
         User user = userRepository.findById(userId)
             .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 사용자입니다."));
 
-        if (!user.getLoginId().equals(currentLoginId)) {
+        if (!user.getLoginId().equals(loginId)) {
             throw new IllegalStateException("본인 계정만 탈퇴할 수 있습니다.");
         }
 
