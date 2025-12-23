@@ -42,7 +42,6 @@ public class UserService {
         // 비밀번호 암호화
         String encodedPassword = passwordEncoder.encode(user.getPassword());
         user.setPassword(encodedPassword);
-
         userRepository.save(user);
     }
 
@@ -111,3 +110,4 @@ public class UserService {
             .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 사용자입니다."));
     }
 }
+
