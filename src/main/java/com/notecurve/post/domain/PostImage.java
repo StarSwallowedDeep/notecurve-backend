@@ -21,11 +21,6 @@ public class PostImage {
     @JoinColumn(name = "post_id")
     private Post post;
 
-    public PostImage(String contentImageUrl, Post post) {
-        this.contentImageUrl = contentImageUrl;
-        this.post = post;
-    }
-
     public void setPost(Post post) {
         this.post = post;
     }
