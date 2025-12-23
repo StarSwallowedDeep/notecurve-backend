@@ -97,7 +97,7 @@ public class PostService {
                 .toList();
 
         // DB에서 제거
-        imagesToDelete.forEach(img -> contentImages.remove(img));
+        contentImages.removeAll(imagesToDelete);
 
         // 새로 추가할 이미지
         Set<String> imagesToAddUrls = new HashSet<>(newImageUrls);
@@ -176,7 +176,10 @@ public class PostService {
 
     private PostImage saveImage(String imageUrl, Post post) throws IOException {
         validateImageExtension(imageUrl);
-        return new PostImage(imageUrl, post);
+        return PostImage.builder()
+            .contentImageUrl(imageUrl)
+            .post(post)
+            .build();
     }
 
     private List<PostImage> saveContentImages(List<String> imageUrls, Post post) throws IOException {
