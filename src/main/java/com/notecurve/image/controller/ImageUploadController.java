@@ -10,15 +10,14 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.notecurve.image.service.ImageUploadService;
 
+import lombok.RequiredArgsConstructor;
+
 @RestController
 @RequestMapping("/api/images")
+@RequiredArgsConstructor
 public class ImageUploadController {
 
     private final ImageUploadService imageUploadService;
-
-    public ImageUploadController(ImageUploadService imageUploadService) {
-        this.imageUploadService = imageUploadService;
-    }
 
     @PostMapping("/uploadMultiple")
     public ResponseEntity<?> uploadImages(@RequestParam("images") List<MultipartFile> files) {
