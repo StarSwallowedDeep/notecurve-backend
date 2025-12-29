@@ -18,12 +18,8 @@ public class ImageServeService {
     private static final Logger LOGGER = Logger.getLogger(ImageServeService.class.getName());
     private static final Set<String> ALLOWED_EXTENSIONS = Set.of("png", "jpeg", "jpg", "gif");
 
-    // @Value로 uploadDir을 주입
     @Value("${file.upload-dir}")
     private Path uploadDir;
-
-    // 생성자는 파라미터를 받지 않음
-    public ImageServeService() {}
 
     public Resource serveImage(String filename) throws IOException {
         String sanitizedFilename = FilenameUtils.getName(filename);
