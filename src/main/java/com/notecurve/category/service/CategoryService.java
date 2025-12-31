@@ -2,48 +2,68 @@ package com.notecurve.category.service;
 
 import com.notecurve.category.domain.Category;
 import com.notecurve.category.repository.CategoryRepository;
+import com.notecurve.category.dto.CategoryDTO;
 import com.notecurve.note.service.NoteService;
+import com.notecurve.note.dto.NoteSummaryDTO;
 import com.notecurve.user.domain.User;
+
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import com.notecurve.note.domain.Note;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
+
+import lombok.RequiredArgsConstructor;
 
 @Service
+@RequiredArgsConstructor
 public class CategoryService {
 
     private final CategoryRepository categoryRepository;
     private final NoteService noteService;
 
-    public CategoryService(CategoryRepository categoryRepository, NoteService noteService) {
-        this.categoryRepository = categoryRepository;
-        this.noteService = noteService;
-    }
-
-    // 사용자별 카테고리 조회
-    public List<Category> getCategoriesByUser(User user) {
-        return categoryRepository.findByUser(user); // 이미 @EntityGraph가 리포지토리에서 처리됨
-    }
-
-    // 특정 카테고리 조회 (사용자 필터)
     public Optional<Category> getCategoryByIdAndUser(Long id, User user) {
         return categoryRepository.findByIdAndUser(id, user);
     }
 
+    // 사용자별 카테고리 조회 + DTO 변환
+    public List<CategoryDTO> getCategoriesDTOByUser(User user) {
+        List<Category> categories = categoryRepository.findByUser(user);
+        return categories.stream()
+                .map(this::toCategoryDTO)
+                .collect(Collectors.toList());
+    }
+
+    // 특정 카테고리 조회 + DTO 변환
+    public Optional<CategoryDTO> getCategoryDTOByIdAndUser(Long id, User user) {
+        return categoryRepository.findByIdAndUser(id, user)
+                .map(this::toCategoryDTO);
+    }
+
     // 카테고리 저장
-    public Category saveCategory(Category category) {
-        return categoryRepository.save(category);
+    public CategoryDTO saveCategory(Category category) {
+        Category saved = categoryRepository.save(category);
+        return toCategoryDTO(saved);
     }
 
     // 카테고리 삭제
     @Transactional
     public void deleteCategoryAndNotes(Category category) {
-        // 카테고리와 관련된 노트를 먼저 삭제
         category.getNotes().forEach(noteService::deleteNote);
-
-        // 카테고리 삭제
         categoryRepository.delete(category);
+    }
+
+    // Category → CategoryDTO 변환 메서드
+    private CategoryDTO toCategoryDTO(Category category) {
+        List<NoteSummaryDTO> noteSummaries = category.getNotes().stream()
+                .map(note -> new NoteSummaryDTO(note.getId(), note.getTitle()))
+                .collect(Collectors.toList());
+
+        return new CategoryDTO(
+                category.getId(),
+                category.getName(),
+                noteSummaries
+        );
     }
 }
