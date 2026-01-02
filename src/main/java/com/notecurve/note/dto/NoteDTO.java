@@ -1,7 +1,6 @@
 package com.notecurve.note.dto;
 
 import com.notecurve.category.dto.CategoryDTO;
-import com.notecurve.user.dto.UserDTO;
 
 import jakarta.validation.constraints.NotBlank;
 import java.time.LocalDateTime;
@@ -28,8 +27,6 @@ public class NoteDTO {
     private String content = "내용 없음";
 
     private LocalDateTime createdDate;
-
-    private UserDTO user;
 
     private CategoryDTO category;
 
