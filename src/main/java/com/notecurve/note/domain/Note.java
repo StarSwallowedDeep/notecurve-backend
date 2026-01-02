@@ -12,15 +12,12 @@ import com.notecurve.category.domain.Category;
 import com.notecurve.notefile.domain.NoteFile;
 import com.notecurve.user.domain.User;
 
-import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.NoArgsConstructor;
 
 @Getter
-@Setter
 @NoArgsConstructor
-@AllArgsConstructor
 @Entity
 public class Note {
 
@@ -28,9 +25,11 @@ public class Note {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Setter
     @NotBlank(message = "제목은 비어 있을 수 없습니다.")
     private String title;
     
+    @Setter
     @Lob
     private String content;
 
@@ -41,12 +40,13 @@ public class Note {
     @Column(updatable = false)
     private LocalDateTime createdDate;
 
+    @Setter
     @ManyToOne
     @JoinColumn(name = "user_id")
     private User user;
 
+    @Setter
     @ManyToOne
     @JoinColumn(name = "category_id")
     private Category category;
-
 }
